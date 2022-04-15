@@ -11,6 +11,9 @@ class Play extends Phaser.Scene {
 
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
+
+        // load music
+        this.load.audio('BGM', './assets/BGM.mp3');
     }
 
     create() {
@@ -83,6 +86,10 @@ class Play extends Phaser.Scene {
                 localStorage.setItem("highScore", highScore);
             }
         }, null, this);
+
+        // Music
+        this.sound.play('BGM');
+        //console.log(this.sound);
     }
 
     update() {
