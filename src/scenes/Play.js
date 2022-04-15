@@ -67,6 +67,7 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         };
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.p1Score, scoreConfig);
+        this.scoreRight = this.add.text(game.config.width - borderUISize - borderPadding - scoreConfig.fixedWidth, borderUISize + borderPadding * 2, highScore, scoreConfig);
     
         // GAME OVER flag
         this.gameOver = false;
@@ -77,6 +78,10 @@ class Play extends Phaser.Scene {
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or <- for Menu', scoreConfig).setOrigin(0.5);
             this.gameOver = true;
+            if (this.p1Score > highScore) {
+                highScore = this.p1Score;
+                localStorage.setItem("highScore", highScore);
+            }
         }, null, this);
     }
 

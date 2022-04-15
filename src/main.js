@@ -5,6 +5,11 @@ let config = {
     scene: [Menu, Play]
 };
 
+let highScore = localStorage.getItem('highScore');
+if (highScore === null) {
+    highScore = 0;
+}
+
 let game = new Phaser.Game(config);
 
 // set UI sizes
