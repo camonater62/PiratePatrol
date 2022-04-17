@@ -7,7 +7,7 @@ class Play extends Phaser.Scene {
         // load images/tile sprites
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
-        this.load.image('starfield', './assets/starfield.png');
+        this.load.image('starfield-far', './assets/starfield-far.png');
         this.load.image('starfield-near', './assets/starfield-near.png');
 
         // load spritesheet
@@ -21,7 +21,7 @@ class Play extends Phaser.Scene {
         // this.add.text(20, 20, "Rocket Patrol Play");
 
         // place tile sprite
-        this.starfield = this.add.tileSprite(0, 0, 640, 480, 'starfield').setOrigin(0, 0);
+        this.starfieldFar = this.add.tileSprite(0, 0, 640, 480, 'starfield-far').setOrigin(0, 0);
         this.starfieldNear = this.add.tileSprite(0, 0, 640, 480, 'starfield-near').setOrigin(0, 0);
 
         // green UI background
@@ -35,7 +35,10 @@ class Play extends Phaser.Scene {
    
         // add rocket (p1)
         this.p1Rocket = new Rocket(this, game.config.width/2, game.config.height - borderUISize - borderPadding, 'rocket').setOrigin(0.5, 0);
-   
+        console.log(this.p1Rocket);
+        this.p1Rocket.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+        this.p1Rocket.scale = 3;
+
         // console.log(this.p1Rocket);
         // add spaceships (x3)
         this.ship01 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 4, 'spaceship', 0, 30).setOrigin(0, 0);
@@ -91,6 +94,10 @@ class Play extends Phaser.Scene {
                 this.scoreRight.text = highScore;
             }
         }, null, this);
+        this.clockCenter = this.add.text(
+            game.config.width / 2 - scoreConfig.fixedWidth / 2, 
+            borderUISize + borderPadding * 2, 
+            game.settings.gameTimer / 1000, scoreConfig);
 
         console.log(this.clock);
 
@@ -115,7 +122,7 @@ class Play extends Phaser.Scene {
             this.scene.start("menuScene");
         }
 
-        this.starfield.tilePositionX -= 2;
+        this.starfieldFar.tilePositionX -= 2;
         this.starfieldNear.tilePositionX -= 4;
         if (!this.gameOver) {
             this.p1Rocket.update();
@@ -139,6 +146,8 @@ class Play extends Phaser.Scene {
             this.p1Rocket.reset();
             this.shipExplode(this.ship01);
         }
+
+        this.clockCenter.text = Math.round((game.settings.gameTimer - this.clock.elapsed) / 1000);
     }
 
     checkCollision(rocket, ship) {
