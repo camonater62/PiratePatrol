@@ -8,6 +8,7 @@ class Play extends Phaser.Scene {
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
         this.load.image('starfield', './assets/starfield.png');
+        this.load.image('starfield-near', './assets/starfield-near.png');
 
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
@@ -21,6 +22,7 @@ class Play extends Phaser.Scene {
 
         // place tile sprite
         this.starfield = this.add.tileSprite(0, 0, 640, 480, 'starfield').setOrigin(0, 0);
+        this.starfieldNear = this.add.tileSprite(0, 0, 640, 480, 'starfield-near').setOrigin(0, 0);
 
         // green UI background
         this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x00FF00).setOrigin(0,0);
@@ -75,6 +77,8 @@ class Play extends Phaser.Scene {
         // GAME OVER flag
         this.gameOver = false;
 
+        this.origsettings = game.settings;
+
         // 60-second play clock
         scoreConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
@@ -84,17 +88,26 @@ class Play extends Phaser.Scene {
             if (this.p1Score > highScore) {
                 highScore = this.p1Score;
                 localStorage.setItem("highScore", highScore);
+                this.scoreRight.text = highScore;
             }
+        }, null, this);
+
+        console.log(this.clock);
+
+        // Half time speed up
+        this.halfclock = this.time.delayedCall(game.settings.gameTimer / 2, () => {
+            game.settings.spaceshipSpeed *= 2;
+            console.log("Speed Up!");
         }, null, this);
 
         // Music
         this.sound.play('BGM');
-        //console.log(this.sound);
     }
 
     update() {
         // check key input for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
+            game.settings = this.origsettings;
             this.scene.restart();
         }
 
@@ -102,7 +115,8 @@ class Play extends Phaser.Scene {
             this.scene.start("menuScene");
         }
 
-        this.starfield.tilePositionX -= 4;
+        this.starfield.tilePositionX -= 2;
+        this.starfieldNear.tilePositionX -= 4;
         if (!this.gameOver) {
             this.p1Rocket.update();
             this.ship01.update();
